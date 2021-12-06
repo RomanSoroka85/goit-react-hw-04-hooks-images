@@ -1,23 +1,44 @@
-import React, { Component } from "react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import s from "./Modal.module.css";
+import PropTypes from "prop-types";
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener("keydown", this.handleKeyDown);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.handleKeyDown);
-  }
-  handleKeyDown = (e) => {
+const modalRoot = document.querySelector("#modal-root");
+
+function Modal({ modalImg, tags, onToggleModal }) {
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  const handleKeyDown = (e) => {
     if (e.code === "Escape") {
-      this.props.closeModal();
+      onToggleModal();
     }
   };
-  render() {
-    return (
-      <div className={s.Overlay}>
-        <div className={s.Modal}><img src={this.props.src}/></div>
+
+  const handleBackdropClick = (event) => {
+    if (event.currentTarget === event.target) {
+      onToggleModal();
+    }
+  };
+
+  return createPortal(
+    <div className={s.Overlay} onClick={handleBackdropClick}>
+      <div className={s.Modal}>
+        <img src={modalImg} alt={tags} />
       </div>
-    );
-  }
+    </div>,
+    modalRoot
+  );
 }
+
+Modal.propTypes = {
+  onToggleModal: PropTypes.func,
+  modalImg: PropTypes.string,
+  tags: PropTypes.string,
+};
+
+export default Modal;

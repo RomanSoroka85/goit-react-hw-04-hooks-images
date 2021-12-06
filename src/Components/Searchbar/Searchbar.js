@@ -1,32 +1,37 @@
-import React, { Component } from "react";
+import { useState } from "react";
 import s from "./Searchbar.module.css";
+import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
-export default class Searchbar extends Component {
-  state = { inputValue: "" };
+function Searchbar({ onSubmit }) {
+  const [query, setQuery] = useState("");
 
-  hendleChange = (e) => {
-    this.setState({ inputValue: e.target.value });
+  const handleQueryChange = (e) => {
+    setQuery(e.target.value.toLowerCase());
   };
 
-  hendleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state.inputValue);
-    this.props.onSubmit(this.state.inputValue);
-    this.setState({ inputValue: "" });
+    if (query.trim() === "") {
+      return toast.error("Enter your query!");
+    }
+    onSubmit(query);
+    setQuery("");
   };
 
-  render() {
-    return (
-      <header className={s.searchbar}>
-        <form className={s.searchForm} onSubmit={this.hendleSubmit}>
+  return (
+    <div>
+      <header className={s.Searchbar}>
+        <form className={s.SearchForm} onSubmit={handleSubmit}>
           <button type="submit" className={s.SearchFormButton}>
-            <span className={s.searchFormButtonLabel}>Search</span>
+            <span className={s.SearchFormButtonLabel}>Search</span>
           </button>
 
           <input
-            className={s.searchFormInput}
-            value={this.state.inputValue}
-            onChange={this.hendleChange}
+            name="query"
+            value={query}
+            onChange={handleQueryChange}
+            className={s.SearchFormInput}
             type="text"
             autoComplete="off"
             autoFocus
@@ -34,6 +39,12 @@ export default class Searchbar extends Component {
           />
         </form>
       </header>
-    );
-  }
+    </div>
+  );
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func,
+};
+
+export default Searchbar;

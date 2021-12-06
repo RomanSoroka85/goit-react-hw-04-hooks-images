@@ -1,5 +1,23 @@
-// import React from "react";
+import { ImSpinner } from "react-icons/im";
 
-// export default function Loader({ message }) {
-//   return <p>{message}</p>;
-// }
+const styles = {
+  spinner: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: 10,
+    fontSize: 24,
+  },
+};
+
+function Loader() {
+  return (
+    <div role="alert">
+      <div style={styles.spinner}>
+        <ImSpinner size="32" className="icon-spin" />
+        Loading...
+      </div>
+    </div>
+  );
+}
+
+export default Loader;
